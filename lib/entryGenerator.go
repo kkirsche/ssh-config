@@ -15,9 +15,6 @@ type SSHConfigurationEntry struct {
 	ConnectTimeout                  int
 	ExitOnForwardFailure            string
 	ForwardAgent                    string
-	ForwardX11                      string
-	ForwardX11Trusted               string
-	HashKnownHosts                  string
 	IdentitiesOnly                  string
 	IdentityFile                    string
 	Host                            string
@@ -42,9 +39,6 @@ const (
 {{- if  .DynamicForward }}{{ print "\n" }}DynamicForward {{.DynamicForward}}{{- end}}
 {{- if  .ExitOnForwardFailure }}{{ print "\n" }}ExitOnForwardFailure {{.ExitOnForwardFailure}} # Valid options: yes or no. Default: no{{- end}}
 {{- if  .ForwardAgent }}{{ print "\n" }}ForwardAgent {{.ForwardAgent}} # Valid options: yes or no. Default: no{{- end}}
-{{- if  .ForwardX11 }}{{ print "\n" }}ForwardX11 {{.ForwardX11}} # Valid options: yes or no. Default: no{{- end}}
-{{- if  .ForwardX11Trusted }}{{ print "\n" }}ForwardX11Trusted {{.ForwardX11Trusted}} # Valid options: yes or no. Default: no{{- end}}
-{{- if  .HashKnownHosts }}{{ print "\n" }}HashKnownHosts {{.HashKnownHosts}} # Default: no{{- end}}
 {{- if  .IdentitiesOnly }}{{ print "\n" }}IdentitiesOnly {{.IdentitiesOnly}} # Default: no{{- end}}
 {{- if  .IdentityFile }}{{ print "\n" }}IdentityFile {{.IdentityFile}}{{- end}}
 {{- if  .Hostname }}{{ print "\n" }}Hostname {{.Hostname}}{{- end}}

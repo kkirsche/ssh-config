@@ -35,9 +35,6 @@ var connectionAttempts int
 var connectTimeout int
 var exitOnForwardFailure string
 var forwardAgent string
-var forwardX11 string
-var forwardX11Trusted string
-var hashKnownHosts string
 var identitiesOnly string
 var identityFile string
 var host string
@@ -56,14 +53,24 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		validation := true
+
 		if host == "" {
-			logger.Errorf("Name not provided. Please provide the name via --name or -n for host %s", hostname)
-		}
-		if hostname == "" {
-			logger.Errorf("Remote host not provided. Please provide the name via --remote-host or -r for named entry: %s", host)
+			validation = false
+			logger.Errorf("Name not provided. Please provide the name via --name or -n")
 		}
 
-		if host != "" && hostname != "" {
+		if !sshConfig.ValidStringArgs(sshConfig.ValidAddressFamilyAnswers(), addressFamily) {
+			validation = false
+			logger.Errorf("Invalid value provided to --address-family (-a). Please enter any, inet, or inet6. You provided: %s", addressFamily)
+		}
+
+		if !sshConfig.ValidStringArgs(sshConfig.ValidYesOrNo(), batchmode) {
+			validation = false
+			logger.Errorf("Invalid value provided to --batchmode (-b). Please enter either yes or no. You provided: %s", batchmode)
+		}
+
+		if validation == true {
 			config := sshConfig.SSHConfigurationEntry{
 				AddressFamily:                   addressFamily,
 				BatchMode:                       batchmode,
@@ -76,9 +83,6 @@ to quickly create a Cobra application.`,
 				ConnectTimeout:                  connectTimeout,
 				ExitOnForwardFailure:            exitOnForwardFailure,
 				ForwardAgent:                    forwardAgent,
-				ForwardX11:                      forwardX11,
-				ForwardX11Trusted:               forwardX11Trusted,
-				HashKnownHosts:                  hashKnownHosts,
 				IdentitiesOnly:                  identitiesOnly,
 				IdentityFile:                    identityFile,
 				Host:                            host,
@@ -103,7 +107,6 @@ func init() {
 	addCmd.PersistentFlags().StringVarP(&bindAddress, "bind-address", "d", "", "Use the specified address on the local\n\t\t\t\t\t machine as the source address of the\n\t\t\t\t\t connection. Only useful on systems with\n\t\t\t\t\t more than one address. Note that this\n\t\t\t\t\t option does not work if\n\t\t\t\t\t UsePrivilegedPort is set to 'yes'.")
 	addCmd.PersistentFlags().StringVarP(&checkHostIP, "check-host-ip", "e", "", "If this flag is set to 'yes', ssh will\n\t\t\t\t\t additionally check the host IP address\n\t\t\t\t\t in the known_hosts file. This allows\n\t\t\t\t\t ssh to detect if a host key changed due\n\t\t\t\t\t to DNS spoofing. If the option\n\t\t\t\t\t is set to 'no', the check will not be\n\t\t\t\t\t executed. The default is 'yes'.")
 	addCmd.PersistentFlags().StringVarP(&forwardAgent, "forward-agent", "f", "", "Specifies whether the connection to the\n\t\t\t\t\t authentication agent (if any) will be\n\t\t\t\t\t forwarded to the remote machine.\n\t\t\t\t\t The argument must be 'yes' or 'no'.\n\t\t\t\t\t The default is 'no'.\n\n\t\t\t\t\t Agent forwarding should be enabled with\n\t\t\t\t\t caution. Users with the ability to\n\t\t\t\t\t bypass file permissions on the\n\t\t\t\t\t remote host (for the agent's\n\t\t\t\t\t Unix-domain socket) can access the\n\t\t\t\t\t local agent through the forwarded\n\t\t\t\t\t connection. An attacker cannot obtain\n\t\t\t\t\t key material from the agent, however\n\t\t\t\t\t they can perform operations on the keys\n\t\t\t\t\t that enable them to authenticate using\n\t\t\t\t\t the identities loaded into the agent.")
-	addCmd.PersistentFlags().StringVarP(&exitOnForwardFailure, "exit-on-forward-failure", "i", "", "Specifies whether ssh should\n\t\t\t\t\t terminate the connection if it cannot\n\t\t\t\t\t set up all requested dynamic, tunnel,\n\t\t\t\t\t local, and remote port forwardings.\n\t\t\t\t\t The argument must be 'yes' or 'no'.\n\t\t\t\t\t The default is 'no'.")
 	addCmd.PersistentFlags().StringVarP(&challengeRespAuth, "challenge-response-auth", "l", "", "Specifies whether to use\n\t\t\t\t\t challenge-response authentication.\n\t\t\t\t\t The argument to this keyword must be\n\t\t\t\t\t 'yes' or 'no'. The default is 'yes'.")
 	addCmd.PersistentFlags().StringVarP(&compression, "compression", "m", "", "Specifies whether to use compression.\n\t\t\t\t\t The argument must be 'yes' or 'no'.\n\t\t\t\t\t The default is 'no'.")
 	addCmd.PersistentFlags().StringVarP(&host, "name", "n", "", "The name is the name argument given on\n\t\t\t\t\t the command line to sshd when\n\t\t\t\t\t connecting to the remote host.")
@@ -113,4 +116,5 @@ func init() {
 	addCmd.PersistentFlags().StringVarP(&ciphers, "ciphers", "s", "", "Specifies the ciphers allowed for\n\t\t\t\t\t protocol version 2 in order of\n\t\t\t\t\t preference. Multiple ciphers must be\n\t\t\t\t\t comma-separated. The supported ciphers\n\t\t\t\t\t are '3des-cbc', 'aes128-cbc',\n\t\t\t\t\t 'aes192-cbc', 'aes256-cbc',\n\t\t\t\t\t 'aes128-ctr', 'aes192-ctr',\n\t\t\t\t\t 'aes256-ctr', 'arcfour128',\n\t\t\t\t\t 'arcfour256', 'arcfour',\n\t\t\t\t\t 'blowfish-cbc', and 'cast128-cbc'.")
 	addCmd.PersistentFlags().IntVarP(&connectTimeout, "connect-timeout", "t", 0, "Specifies the timeout (in seconds) used\n\t\t\t\t\t when connecting to the SSH server,\n\t\t\t\t\t instead of using the default system\n\t\t\t\t\t TCP timeout. This value is used only\n\t\t\t\t\t when the target is down or really\n\t\t\t\t\t unreachable, not when it refuses\n\t\t\t\t\t the connection.")
 	addCmd.PersistentFlags().StringVarP(&username, "user", "u", "", "The remote username to connect as.")
+	addCmd.PersistentFlags().StringVarP(&exitOnForwardFailure, "exit-on-forward-failure", "x", "", "Specifies whether ssh should\n\t\t\t\t\t terminate the connection if it cannot\n\t\t\t\t\t set up all requested dynamic, tunnel,\n\t\t\t\t\t local, and remote port forwardings.\n\t\t\t\t\t The argument must be 'yes' or 'no'.\n\t\t\t\t\t The default is 'no'.")
 }
