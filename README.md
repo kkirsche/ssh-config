@@ -1,4 +1,6 @@
 # ssh-config
+[![Build Status](https://travis-ci.org/kkirsche/ssh-config.svg?branch=master)](https://travis-ci.org/kkirsche/ssh-config) [![GoDoc](https://godoc.org/github.com/kkirsche/ssh-config?status.svg)](https://godoc.org/github.com/kkirsche/ssh-config)
+
 A cross-platform sshd configuration file manager allowing for easily adding and removing host configurations.
 
 ## Examples
@@ -6,7 +8,7 @@ A cross-platform sshd configuration file manager allowing for easily adding and 
 ### Add Entries to Configuration File(s)
 
 ```shell
-~ ❯❯❯ ssh-config add
+~ ❯❯❯ ssh-config add -n "Ghost" -r "1.2.3.4" -p 22 -u "example"
 Adding the following entry to /Users/example/.ssh/config
 
 Host Ghost
