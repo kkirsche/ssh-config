@@ -25,8 +25,8 @@ import (
 var showCmd = &cobra.Command{
 	Use:   "show",
 	Short: "Prints the contents of the SSH configuration file.",
-	Long: `Prints the contents of the user's SSH configuration file or system SSH
-configuration file to Stdout.`,
+	Long: `Prints the contents of the user's SSH configuration file or the
+contents of a configuration file of your choice.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		logger.VerbosePrintf("Opening configuration file handle at %s", cfgFilePath)
 		file, err := os.Open(cfgFilePath)
