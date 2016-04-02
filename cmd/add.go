@@ -23,15 +23,34 @@ import (
 )
 
 var (
-	batchmode            bool
-	challengeRespAuth    bool
-	checkHostIP          bool
-	clearAllForwardings  bool
-	compression          bool
-	exitOnForwardFailure bool
-	forwardAgent         bool
-	identitiesOnly       bool
-	writeToFile          bool
+	batchmode                    bool
+	challengeRespAuth            bool
+	checkHostIP                  bool
+	clearAllForwardings          bool
+	compression                  bool
+	enableSSHKeysign             bool
+	exitOnForwardFailure         bool
+	forwardAgent                 bool
+	forwardX11                   bool
+	forwardX11Trusted            bool
+	gatewayPorts                 bool
+	gssAPIAuthentication         bool
+	gssAPIKeyExchange            bool
+	gssAPIDelegateCredentials    bool
+	gssAPIRenewalForcesRekey     bool
+	gssAPITrustDNS               bool
+	hashKnownHosts               bool
+	identitiesOnly               bool
+	kbdInteractiveAuthentication bool
+	passwordAuthentication       bool
+	permitLocalCommand           bool
+	publicKeyAuthentication      bool
+	rhostsRSAAuthentication      bool
+	rsaAuthentication            bool
+	tcpKeepAlive                 bool
+	usePrivilegedPort            bool
+	visualHostKey                bool
+	writeToFile                  bool
 
 	addressFamily string
 	bindAddress   string
@@ -60,10 +79,9 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		validation := true
 		config := sshConfig.SSHConfigurationEntry{
-			AddressFamily: addressFamily,
-			BindAddress:   bindAddress,
-			Cipher:        cipher,
-
+			AddressFamily:      addressFamily,
+			BindAddress:        bindAddress,
+			Cipher:             cipher,
 			Ciphers:            ciphers,
 			ConnectionAttempts: connectionAttempts,
 			ConnectTimeout:     connectTimeout,
@@ -90,16 +108,24 @@ var addCmd = &cobra.Command{
 			config.BatchMode = yes
 		}
 
-		if compression {
-			config.Compression = yes
-		}
-
 		if challengeRespAuth {
 			config.ChallengeResponseAuthentication = yes
 		}
 
 		if checkHostIP {
 			config.CheckHostIP = yes
+		}
+
+		if clearAllForwardings {
+			config.ClearAllForwardings = yes
+		}
+
+		if compression {
+			config.Compression = yes
+		}
+
+		if enableSSHKeysign {
+			config.EnableSSHKeysign = yes
 		}
 
 		if exitOnForwardFailure {
@@ -110,15 +136,87 @@ var addCmd = &cobra.Command{
 			config.ForwardAgent = yes
 		}
 
+		if forwardX11 {
+			config.ForwardX11 = yes
+		}
+
+		if forwardX11Trusted {
+			config.ForwardX11Trusted = yes
+		}
+
+		if gatewayPorts {
+			config.GatewayPorts = yes
+		}
+
+		if gssAPIAuthentication {
+			config.GSSAPIAuthentication = yes
+		}
+
+		if gssAPIKeyExchange {
+			config.GSSAPIKeyExchange = yes
+		}
+
+		if gssAPIDelegateCredentials {
+			config.GSSAPIDelegateCredentials = yes
+		}
+
+		if gssAPIRenewalForcesRekey {
+			config.GSSAPIRenewalForcesRekey = yes
+		}
+
+		if gssAPITrustDNS {
+			config.GSSAPITrustDNS = yes
+		}
+
+		if hashKnownHosts {
+			config.HashKnownHosts = yes
+		}
+
 		if identitiesOnly {
 			config.IdentitiesOnly = yes
+		}
+
+		if kbdInteractiveAuthentication {
+			config.KBDInteractiveAuthentication = yes
+		}
+
+		if passwordAuthentication {
+			config.PasswordAuthentication = yes
+		}
+
+		if permitLocalCommand {
+			config.PermitLocalCommand = yes
+		}
+
+		if publicKeyAuthentication {
+			config.PubkeyAuthentication = yes
+		}
+
+		if rhostsRSAAuthentication {
+			config.RhostsRSAAuthentication = yes
+		}
+
+		if rsaAuthentication {
+			config.RSAAuthentication = yes
+		}
+
+		if tcpKeepAlive {
+			config.TCPKeepAlive = yes
+		}
+
+		if usePrivilegedPort {
+			config.UsePrivilegedPort = yes
+		}
+
+		if visualHostKey {
+			config.VisualHostKey = yes
 		}
 
 		if validation == true {
 			t := template.Must(template.New("sshConfig").Parse(sshConfig.SSHConfigurationEntryTemplate))
 			err := t.Execute(os.Stdout, config)
 			if err != nil {
-				logger.Errorf("Couldn't execute SSH Configuration Template with error: %s", err.Error())
+				logger.Errorf("\nCouldn't execute SSH Configuration Template with error: %s", err.Error())
 			}
 		}
 	},
