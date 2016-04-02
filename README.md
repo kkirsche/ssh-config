@@ -135,6 +135,9 @@ User toor
 #   XAuthLocationi xauth
 ```
 
+### Supported Properties
+Viewable on the [Wiki](https://github.com/kkirsche/ssh-config/wiki/Supported-Properties) for easy access and sharing (and avoid keeping this junked up.)
+
 ### Meta
 
 #### Version Number

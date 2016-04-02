@@ -148,5 +148,4 @@ func init() {
 	// y is undefined
 	addCmd.PersistentFlags().BoolVarP(&exitOnForwardFailure, "identities-only", "z", false, "Specifies that ssh should only use the\n\t\t\t\t\t authentication identity files\n\t\t\t\t\t configured in the ssh_config files,\n\t\t\t\t\t even if ssh-agent offers more\n\t\t\t\t\t identities. The argument to this\n\t\t\t\t\t keyword must be 'yes' or 'no'. This\n\t\t\t\t\t option is intended for situations\n\t\t\t\t\t where ssh-agent offers many different\n\t\t\t\t\t identities. The default is 'no'.")
 
-	addCmd.PersistentFlags().StringVar(p *string, name string, value string, usage string)
 }
