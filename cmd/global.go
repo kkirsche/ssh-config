@@ -24,9 +24,9 @@ import (
 // globalCmd represents the global command
 var globalCmd = &cobra.Command{
 	Use:   "global",
-	Short: "Prints the contents of the current user's SSH configuration file.",
-	Long: `Prints the contents of the current user's SSH configuration file to
-	Stdout.`,
+	Short: "Prints the contents of the global SSH configuration file.",
+	Long: `Prints the contents of the global SSH configuration file to
+Stdout.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Location per http://linux.die.net/man/5/ssh_config
 		cfgFilePath = "/etc/ssh/ssh_config"
