@@ -22,27 +22,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var batchmode bool
-var challengeRespAuth bool
-var checkHostIP bool
-var compression bool
-var exitOnForwardFailure bool
-var forwardAgent bool
-var identitiesOnly bool
-var writeToFile bool
+var (
+	batchmode            bool
+	challengeRespAuth    bool
+	checkHostIP          bool
+	clearAllForwardings  bool
+	compression          bool
+	exitOnForwardFailure bool
+	forwardAgent         bool
+	identitiesOnly       bool
+	writeToFile          bool
 
-var addressFamily string
-var bindAddress string
-var ciphers string
-var clearAllForwardings string
-var identityFile string
-var host string
-var hostname string
-var username string
+	addressFamily string
+	bindAddress   string
+	cipher        string
+	ciphers       string
+	identityFile  string
+	host          string
+	hostname      string
+	username      string
 
-var connectionAttempts int
-var connectTimeout int
-var port int
+	connectionAttempts int
+	connectTimeout     int
+	port               int
+)
 
 const (
 	yes = "yes"
@@ -57,8 +60,10 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		validation := true
 		config := sshConfig.SSHConfigurationEntry{
-			AddressFamily:      addressFamily,
-			BindAddress:        bindAddress,
+			AddressFamily: addressFamily,
+			BindAddress:   bindAddress,
+			Cipher:        cipher,
+
 			Ciphers:            ciphers,
 			ConnectionAttempts: connectionAttempts,
 			ConnectTimeout:     connectTimeout,
@@ -148,4 +153,6 @@ func init() {
 	// y is undefined
 	addCmd.PersistentFlags().BoolVarP(&exitOnForwardFailure, "identities-only", "z", false, "Specifies that ssh should only use the\n\t\t\t\t\t authentication identity files\n\t\t\t\t\t configured in the ssh_config files,\n\t\t\t\t\t even if ssh-agent offers more\n\t\t\t\t\t identities. The argument to this\n\t\t\t\t\t keyword must be 'yes' or 'no'. This\n\t\t\t\t\t option is intended for situations\n\t\t\t\t\t where ssh-agent offers many different\n\t\t\t\t\t identities. The default is 'no'.")
 
+	// Define the flags that do not have short versions :(
+	addCmd.PersistentFlags().StringVar(&cipher, "cipher", "", "Specifies the cipher to use for encrypting the session in protocol version 1. Currently, 'blowfish', '3des', and 'des' are supported. des is only supported in the ssh(1) client for interoperability with legacy protocol 1 implementations that do not support the 3des cipher. Its use is strongly discouraged due to cryptographic weaknesses. The default is '3des'.")
 }
