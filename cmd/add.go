@@ -306,7 +306,7 @@ func init() {
 	addCmd.PersistentFlags().BoolVarP(&compression, "compression", "m", false, "Specifies whether to use compression.\n\t\t\t\t\t The argument must be 'yes' or 'no'.\n\t\t\t\t\t The default is 'no'.")
 	addCmd.PersistentFlags().StringVarP(&host, "name", "n", "", "The name is the name argument given on\n\t\t\t\t\t the command line to sshd when\n\t\t\t\t\t connecting to the remote host.")
 	addCmd.PersistentFlags().IntVarP(&connectionAttempts, "connection-attempts", "o", 0, "Specifies the number of tries (one per\n\t\t\t\t\t second) to make before exiting.\n\t\t\t\t\t This may be useful in scripts if the\n\t\t\t\t\t connection sometimes fails.")
-	addCmd.PersistentFlags().IntVarP(&port, "port", "p", 22, "Specifies the port number to connect\n\t\t\t\t\t on the remote host.")
+	addCmd.PersistentFlags().IntVarP(&port, "port", "p", 0, "Specifies the port number to connect\n\t\t\t\t\t on the remote host.")
 	// q is undefined
 	addCmd.PersistentFlags().StringVarP(&hostname, "hostname", "r", "", "Specifies the real host name to log\n\t\t\t\t\t into. This can be used to specify\n\t\t\t\t\t nicknames or abbreviations for hosts.\n\t\t\t\t\t The default is the name given\n\t\t\t\t\t on the command line. Numeric IP\n\t\t\t\t\t addresses are also permitted.")
 	addCmd.PersistentFlags().StringVarP(&ciphers, "ciphers", "s", "", "Specifies the ciphers allowed for\n\t\t\t\t\t protocol version 2 in order of\n\t\t\t\t\t preference. Multiple ciphers must be\n\t\t\t\t\t comma-separated. The supported ciphers\n\t\t\t\t\t are '3des-cbc', 'aes128-cbc',\n\t\t\t\t\t 'aes192-cbc', 'aes256-cbc',\n\t\t\t\t\t 'aes128-ctr', 'aes192-ctr',\n\t\t\t\t\t 'aes256-ctr', 'arcfour128',\n\t\t\t\t\t 'arcfour256', 'arcfour',\n\t\t\t\t\t 'blowfish-cbc', and 'cast128-cbc'.")

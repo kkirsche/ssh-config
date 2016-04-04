@@ -19,7 +19,6 @@ const (
 {{- if  .ControlMaster }}{{ print "\n" }}ControlMaster {{.ControlMaster}}{{- end}}
 {{- if  .ControlPath }}{{ print "\n" }}ControlPath {{.ControlPath}}{{- end}}
 {{- if  .DynamicForward }}{{ print "\n" }}DynamicForward {{.DynamicForward}}{{- end}}
-{{- if  .EnableSSHKeysign }}{{ print "\n" }}EnableSSHKeysign {{.EnableSSHKeysign}}{{- end}}
 {{- if  .EscapeChar }}{{ print "\n" }}EscapeChar {{.EscapeChar}}{{- end}}
 {{- if  .ExitOnForwardFailure }}{{ print "\n" }}ExitOnForwardFailure {{.ExitOnForwardFailure}}{{- end}}
 {{- if  .ForwardAgent }}{{ print "\n" }}ForwardAgent {{.ForwardAgent}}{{- end}}
