@@ -267,6 +267,10 @@ var addCmd = &cobra.Command{
 			config.TCPKeepAlive = yes
 		}
 
+		if noHostAuthForLocalhost {
+			config.NoHostAuthenticationForLocalhost = yes
+		}
+
 		if usePrivilegedPort {
 			config.UsePrivilegedPort = yes
 		}
@@ -326,6 +330,7 @@ func init() {
 	addCmd.PersistentFlags().BoolVar(&gssAPIKeyExchange, "gssapi-key-exchange", false, "Specifies whether key exchange based on GSSAPI may be used. When using GSSAPI key exchange the server need not have a host key.")
 	addCmd.PersistentFlags().BoolVar(&gssAPIRenewalForcesRekey, "gssapi-renewal-forces-rekey", false, "If enabled, then renewal of the client's GSSAPI credentials will force the rekeying of the ssh connection. With a compatible server, this can delegate the renewed credentials to a session on the server.")
 	addCmd.PersistentFlags().BoolVar(&gssAPITrustDNS, "gssapi-trust-dns", false, "Enable this feature to indicate that the DNS is trusted to securely canonicalize' the name of the host being connected to.")
+	addCmd.PersistentFlags().StringVar(&gssAPIClientIdentity, "gssapi-client-identity", "", "If set, specifies the GSSAPI client identity that ssh should use when connecting to the server. The default is unset, which means that the default identity will be used.")
 	addCmd.PersistentFlags().BoolVar(&hashKnownHosts, "hash-known-hosts", false, "Indicates that ssh should hash host names and addresses when they are added to ~/.ssh/known_hosts. These hashed names may be used normally by ssh and sshd(8), but they do not reveal identifying information should the file's contents be disclosed.")
 	addCmd.PersistentFlags().BoolVar(&kbdInteractiveAuthentication, "kbd-interactive-auth", false, "Specifies whether to use keyboard-interactive authentication.")
 	addCmd.PersistentFlags().BoolVar(&passwordAuthentication, "password-auth", false, "Specifies whether to use password authentication.")
@@ -336,4 +341,17 @@ func init() {
 	addCmd.PersistentFlags().BoolVar(&tcpKeepAlive, "tcp-keepalive", false, "Specifies whether the system should send TCP keepalive messages to the other side. If they are sent, death of the connection or crash of one of the machines will be properly noticed. However, this means that connections will die if the route is down temporarily, and some people find it annoying.")
 	addCmd.PersistentFlags().BoolVar(&usePrivilegedPort, "use-priviledged-port", false, "Specifies whether to use a privileged port for outgoing connections. If enabled, ssh must be setuid root.")
 	addCmd.PersistentFlags().BoolVar(&visualHostKey, "visual-hostkey", false, "If enabled, an ASCII art representation of the remote host key fingerprint is printed in addition to the hex fingerprint string at login and for unknown host keys.")
+	addCmd.PersistentFlags().StringVar(&hostBasedAuth, "host-based-auth", false, "Specifies whether to try rhosts based authentication with public key authentication.")
+	addCmd.PersistentFlags().StringVar(&controlMaster, "control-master", "", "Enables the sharing of multiple sessions over a single network connection.")
+	addCmd.PersistentFlags().StringVar(&controlPath, "control-path", "", "Specify the path to the control socket used for connection sharing as described in the ControlMaster section above or the string 'none' to disable connection sharing.")
+	addCmd.PersistentFlags().StringVar(&dynamicForward, "dynamic-forward", "", "Specifies that a TCP port on the local machine be forwarded over the secure channel, and the application protocol is then used to determine where to connect to from the remote machine.")
+	addCmd.PersistentFlags().StringVar(&escapeChar, "escape-char", "", "Sets the escape character.")
+	addCmd.PersistentFlags().StringVar(&hostKeyAlgorithms, "host-key-algorithms", "", "Specifies the protocol version 2 host key algorithms that the client wants to use in order of preference.")
+	addCmd.PersistentFlags().StringVar(&hostKeyAlias, "host-key-alias", "", "Specifies an alias that should be used instead of the real host name when looking up or saving the host key in the host key database files. This option is useful for tunneling SSH connections or for multiple servers running on a single host.")
+	addCmd.PersistentFlags().StringVar(&kbdInteractiveDevices, "kbd-interactive-devices", "", "Specifies the list of methods to use in keyboard-interactive authentication. Multiple method names must be comma-separated.")
+	addCmd.PersistentFlags().StringVar(&localCommand, "local-command", "", "Specifies a command to execute on the local machine after successfully connecting to the server.")
+	addCmd.PersistentFlags().StringVar(&localForward, "local-forward", "", "Specifies that a TCP port on the local machine be forwarded over the secure channel to the specified host and port from the remote machine.")
+	addCmd.PersistentFlags().StringVar(&logLevel, "log-level", "", "Gives the verbosity level that is used when logging messages from ssh. The possible values are: QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, and DEBUG3.")
+	addCmd.PersistentFlags().StringVar(&macs, "macs", "", "Specifies the MAC (message authentication code) algorithms in order of preference. The MAC algorithm is used in protocol version 2 for data integrity protection. Multiple algorithms must be comma-separated.")
+	addCmd.PersistentFlags().StringVar(&preferredAuthentications, "preferred-auths", "", "Specifies the order in which the client should try protocol 2 authentication methods. This allows a client to prefer one method (e.g. keyboard-interactive) over another method (e.g. password).")
 }
