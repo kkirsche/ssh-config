@@ -68,7 +68,7 @@ func (l *Logger) VerbosePrintln(v ...interface{}) {
 // io.Writer output (default: stdout).
 func (l *Logger) Printf(format string, v ...interface{}) {
 	l.printPrefix()
-	fmt.Fprintf(l.Out, format+"\n", v)
+	fmt.Fprintf(l.Out, format+"\n", v...)
 }
 
 // VerbosePrintf calls fmt's Fprintf to write the formatted message to the
@@ -77,7 +77,7 @@ func (l *Logger) Printf(format string, v ...interface{}) {
 func (l *Logger) VerbosePrintf(format string, v ...interface{}) {
 	if l.Verbose {
 		l.printVerbosePrefix()
-		fmt.Fprintf(l.Out, format+"\n", v)
+		fmt.Fprintf(l.Out, format+"\n", v...)
 	}
 }
 
@@ -85,7 +85,7 @@ func (l *Logger) VerbosePrintf(format string, v ...interface{}) {
 // io.Writer output (default: stderr).
 func (l *Logger) Errorf(format string, v ...interface{}) {
 	l.printPrefix()
-	fmt.Fprintf(l.Err, format+"\n", v)
+	fmt.Fprintf(l.Err, format+"\n", v...)
 }
 
 // VerboseErrorf calls fmt's Fprintf to write the formatted message to the
@@ -94,6 +94,6 @@ func (l *Logger) Errorf(format string, v ...interface{}) {
 func (l *Logger) VerboseErrorf(format string, v ...interface{}) {
 	if l.Verbose {
 		l.printVerbosePrefix()
-		fmt.Fprintf(l.Err, format+"\n", v)
+		fmt.Fprintf(l.Err, format+"\n", v...)
 	}
 }
