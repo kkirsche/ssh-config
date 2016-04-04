@@ -17,6 +17,7 @@ package cmd
 import (
 	"html/template"
 	"os"
+	"strings"
 
 	"github.com/kkirsche/ssh-config/lib"
 	"github.com/spf13/cobra"
@@ -152,9 +153,13 @@ stdout as well as (if specified) a file.`,
 			XAuthLocation:            xAuthLocation,
 		}
 
-		if host == "" {
+		if args != nil {
+			config.Host = strings.Join(args, "")
+		}
+
+		if config.Host != "" {
 			validation = false
-			logger.Errorf("Name not provided. Please provide the name via --name or -n")
+			logger.Errorf("Host's name not provided. Please provide the name via --name or -n.")
 			return
 		}
 
