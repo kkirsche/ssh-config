@@ -18,7 +18,6 @@ type SSHConfigurationEntry struct {
 	ControlMaster                    string
 	ControlPath                      string
 	DynamicForward                   string
-	EnableSSHKeysign                 string
 	EscapeChar                       string
 	ExitOnForwardFailure             string
 	ForwardAgent                     string

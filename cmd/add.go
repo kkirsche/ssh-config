@@ -28,20 +28,21 @@ var (
 	checkHostIP                  bool
 	clearAllForwardings          bool
 	compression                  bool
-	enableSSHKeysign             bool
 	exitOnForwardFailure         bool
 	forwardAgent                 bool
 	forwardX11                   bool
 	forwardX11Trusted            bool
 	gatewayPorts                 bool
 	gssAPIAuthentication         bool
-	gssAPIKeyExchange            bool
 	gssAPIDelegateCredentials    bool
+	gssAPIKeyExchange            bool
 	gssAPIRenewalForcesRekey     bool
 	gssAPITrustDNS               bool
 	hashKnownHosts               bool
+	hostBasedAuth                bool
 	identitiesOnly               bool
 	kbdInteractiveAuthentication bool
+	noHostAuthForLocalhost       bool
 	passwordAuthentication       bool
 	permitLocalCommand           bool
 	publicKeyAuthentication      bool
@@ -52,18 +53,47 @@ var (
 	visualHostKey                bool
 	writeToFile                  bool
 
-	addressFamily string
-	bindAddress   string
-	cipher        string
-	ciphers       string
-	identityFile  string
-	host          string
-	hostname      string
-	username      string
+	addressFamily            string
+	bindAddress              string
+	cipher                   string
+	ciphers                  string
+	controlMaster            string
+	controlPath              string
+	dynamicForward           string
+	escapeChar               string
+	gssAPIClientIdentity     string
+	host                     string
+	hostKeyAlgorithms        string
+	hostKeyAlias             string
+	hostname                 string
+	identityFile             string
+	kbdInteractiveDevices    string
+	localCommand             string
+	localForward             string
+	logLevel                 string
+	macs                     string
+	preferredAuthentications string
+	protocol                 string
+	proxyCommand             string
+	rekeyLimit               string
+	remoteForward            string
+	sendEnv                  string
+	smartcardDevice          string
+	strictHostkeyChecking    string
+	tunnel                   string
+	tunnelDevice             string
+	userKnownHostsFile       string
+	username                 string
+	verifyHostKeyDNS         string
+	xAuthLocation            string
 
-	connectionAttempts int
-	connectTimeout     int
-	port               int
+	compressionLevel        int
+	connectionAttempts      int
+	connectTimeout          int
+	numberOfPasswordPrompts int
+	port                    int
+	serverAliveCountMax     int
+	serverAliveInterval     int
 )
 
 const (
@@ -79,17 +109,46 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		validation := true
 		config := sshConfig.SSHConfigurationEntry{
-			AddressFamily:      addressFamily,
-			BindAddress:        bindAddress,
-			Cipher:             cipher,
-			Ciphers:            ciphers,
-			ConnectionAttempts: connectionAttempts,
-			ConnectTimeout:     connectTimeout,
-			IdentityFile:       identityFile,
-			Hostname:           hostname,
-			Host:               host,
-			Port:               port,
-			User:               username,
+			AddressFamily:         addressFamily,
+			BindAddress:           bindAddress,
+			Cipher:                cipher,
+			Ciphers:               ciphers,
+			CompressionLevel:      compressionLevel,
+			ConnectionAttempts:    connectionAttempts,
+			ConnectTimeout:        connectTimeout,
+			ControlMaster:         controlMaster,
+			ControlPath:           controlPath,
+			DynamicForward:        dynamicForward,
+			EscapeChar:            escapeChar,
+			GSSAPIClientIdentity:  gssAPIClientIdentity,
+			Host:                  host,
+			HostKeyAlgorithms:     hostKeyAlgorithms,
+			HostKeyAlias:          hostKeyAlias,
+			Hostname:              hostname,
+			IdentityFile:          identityFile,
+			KBDInteractiveDevices: kbdInteractiveDevices,
+			LocalCommand:          localCommand,
+			LocalForward:          localForward,
+			LogLevel:              logLevel,
+			MACs:                  macs,
+			NumberOfPasswordPrompts: numberOfPasswordPrompts,
+			Port: port,
+			PreferredAuthentications: preferredAuthentications,
+			Protocol:                 protocol,
+			ProxyCommand:             proxyCommand,
+			RekeyLimit:               rekeyLimit,
+			RemoteForward:            remoteForward,
+			SendEnv:                  sendEnv,
+			ServerAliveCountMax:      serverAliveCountMax,
+			ServerAliveInterval:      serverAliveInterval,
+			SmartcardDevice:          smartcardDevice,
+			StrictHostKeyChecking:    strictHostkeyChecking,
+			Tunnel:                   tunnel,
+			TunnelDevice:             tunnelDevice,
+			User:                     username,
+			UserKnownHostsFile:       userKnownHostsFile,
+			VerifyHostKeyDNS:         verifyHostKeyDNS,
+			XAuthLocation:            xAuthLocation,
 		}
 
 		if host == "" {
@@ -122,10 +181,6 @@ var addCmd = &cobra.Command{
 
 		if compression {
 			config.Compression = yes
-		}
-
-		if enableSSHKeysign {
-			config.EnableSSHKeysign = yes
 		}
 
 		if exitOnForwardFailure {
@@ -172,12 +227,20 @@ var addCmd = &cobra.Command{
 			config.HashKnownHosts = yes
 		}
 
+		if hostBasedAuth {
+			config.HostbasedAuthentication = yes
+		}
+
 		if identitiesOnly {
 			config.IdentitiesOnly = yes
 		}
 
 		if kbdInteractiveAuthentication {
 			config.KBDInteractiveAuthentication = yes
+		}
+
+		if noHostAuthForLocalhost {
+			config.NoHostAuthenticationForLocalhost = yes
 		}
 
 		if passwordAuthentication {
@@ -249,8 +312,28 @@ func init() {
 	addCmd.PersistentFlags().BoolVarP(&writeToFile, "write", "w", false, "Write the output of the tool to a file in\n\t\t\t\t\t addition to stdout.")
 	addCmd.PersistentFlags().BoolVarP(&exitOnForwardFailure, "exit-on-forward-failure", "x", false, "Specifies whether ssh should\n\t\t\t\t\t terminate the connection if it cannot\n\t\t\t\t\t set up all requested dynamic, tunnel,\n\t\t\t\t\t local, and remote port forwardings.\n\t\t\t\t\t The argument must be 'yes' or 'no'.\n\t\t\t\t\t The default is 'no'.")
 	// y is undefined
-	addCmd.PersistentFlags().BoolVarP(&exitOnForwardFailure, "identities-only", "z", false, "Specifies that ssh should only use the\n\t\t\t\t\t authentication identity files\n\t\t\t\t\t configured in the ssh_config files,\n\t\t\t\t\t even if ssh-agent offers more\n\t\t\t\t\t identities. The argument to this\n\t\t\t\t\t keyword must be 'yes' or 'no'. This\n\t\t\t\t\t option is intended for situations\n\t\t\t\t\t where ssh-agent offers many different\n\t\t\t\t\t identities. The default is 'no'.")
+	addCmd.PersistentFlags().BoolVarP(&identitiesOnly, "identities-only", "z", false, "Specifies that ssh should only use the\n\t\t\t\t\t authentication identity files\n\t\t\t\t\t configured in the ssh_config files,\n\t\t\t\t\t even if ssh-agent offers more\n\t\t\t\t\t identities. The argument to this\n\t\t\t\t\t keyword must be 'yes' or 'no'. This\n\t\t\t\t\t option is intended for situations\n\t\t\t\t\t where ssh-agent offers many different\n\t\t\t\t\t identities. The default is 'no'.")
 
 	// Define the flags that do not have short versions :(
-	addCmd.PersistentFlags().StringVar(&cipher, "cipher", "", "Specifies the cipher to use for encrypting the session in protocol version 1. Currently, 'blowfish', '3des', and 'des' are supported. des is only supported in the ssh(1) client for interoperability with legacy protocol 1 implementations that do not support the 3des cipher. Its use is strongly discouraged due to cryptographic weaknesses. The default is '3des'.")
+	addCmd.PersistentFlags().StringVar(&cipher, "cipher", "", "Specifies the cipher to use for encrypting the session in protocol version 1. Currently, 'blowfish', '3des', and 'des' are supported. des is only supported in the ssh client for interoperability with legacy protocol 1 implementations that do not support the 3des cipher. Its use is strongly discouraged due to cryptographic weaknesses. The default is '3des'.")
+	addCmd.PersistentFlags().StringVar(&identityFile, "identity-file", "", "Specifies a file from which the user's RSA or DSA authentication identity is read.")
+	addCmd.PersistentFlags().BoolVar(&clearAllForwardings, "clear-all-forwardings", false, "Specifies that all local, remote, and dynamic port forwardings specified in the configuration files or on the command line be cleared. This option is primarily useful when used from the ssh command line to clear port forwardings set in configuration files, and is automatically set by scp and sftp.")
+	addCmd.PersistentFlags().BoolVar(&forwardX11, "forward-x11", false, "Specifies whether X11 connections will be automatically redirected over the secure channel and DISPLAY set.")
+	addCmd.PersistentFlags().BoolVar(&forwardX11Trusted, "forward-x11-trusted", false, "If this option is enabled, remote X11 clients will have full access to the original X11 display.")
+	addCmd.PersistentFlags().BoolVar(&gatewayPorts, "gateway-ports", false, "Specifies whether remote hosts are allowed to connect to local forwarded ports. By default, ssh binds local port forwardings to the loopback address. This prevents other remote hosts from connecting to forwarded ports.")
+	addCmd.PersistentFlags().BoolVar(&gssAPIAuthentication, "gssapi-authentication", false, "Specifies whether user authentication based on GSSAPI is allowed.")
+	addCmd.PersistentFlags().BoolVar(&gssAPIDelegateCredentials, "gssapi-delegate-credentials", false, "Forward (delegate) credentials to the server.")
+	addCmd.PersistentFlags().BoolVar(&gssAPIKeyExchange, "gssapi-key-exchange", false, "Specifies whether key exchange based on GSSAPI may be used. When using GSSAPI key exchange the server need not have a host key.")
+	addCmd.PersistentFlags().BoolVar(&gssAPIRenewalForcesRekey, "gssapi-renewal-forces-rekey", false, "If enabled, then renewal of the client's GSSAPI credentials will force the rekeying of the ssh connection. With a compatible server, this can delegate the renewed credentials to a session on the server.")
+	addCmd.PersistentFlags().BoolVar(&gssAPITrustDNS, "gssapi-trust-dns", false, "Enable this feature to indicate that the DNS is trusted to securely canonicalize' the name of the host being connected to.")
+	addCmd.PersistentFlags().BoolVar(&hashKnownHosts, "hash-known-hosts", false, "Indicates that ssh should hash host names and addresses when they are added to ~/.ssh/known_hosts. These hashed names may be used normally by ssh and sshd(8), but they do not reveal identifying information should the file's contents be disclosed.")
+	addCmd.PersistentFlags().BoolVar(&kbdInteractiveAuthentication, "kbd-interactive-auth", false, "Specifies whether to use keyboard-interactive authentication.")
+	addCmd.PersistentFlags().BoolVar(&passwordAuthentication, "password-auth", false, "Specifies whether to use password authentication.")
+	addCmd.PersistentFlags().BoolVar(&permitLocalCommand, "permit-local-cmd", false, "Allow local command execution via the LocalCommand option or using the !command escape sequence in ssh.")
+	addCmd.PersistentFlags().BoolVar(&publicKeyAuthentication, "public-key-auth", false, "Specifies whether to try public key authentication.")
+	addCmd.PersistentFlags().BoolVar(&rhostsRSAAuthentication, "rhosts-rsa-auth", false, "Specifies whether to try rhosts based authentication with RSA host authentication.")
+	addCmd.PersistentFlags().BoolVar(&rsaAuthentication, "rsa-auth", false, "Specifies whether to try RSA authentication. RSA authentication will only be attempted if the identity file exists, or an authentication agent is running. Note that this option applies to protocol version 1 only.")
+	addCmd.PersistentFlags().BoolVar(&tcpKeepAlive, "tcp-keepalive", false, "Specifies whether the system should send TCP keepalive messages to the other side. If they are sent, death of the connection or crash of one of the machines will be properly noticed. However, this means that connections will die if the route is down temporarily, and some people find it annoying.")
+	addCmd.PersistentFlags().BoolVar(&usePrivilegedPort, "use-priviledged-port", false, "Specifies whether to use a privileged port for outgoing connections. If enabled, ssh must be setuid root.")
+	addCmd.PersistentFlags().BoolVar(&visualHostKey, "visual-hostkey", false, "If enabled, an ASCII art representation of the remote host key fingerprint is printed in addition to the hex fingerprint string at login and for unknown host keys.")
 }
