@@ -5,25 +5,30 @@ import (
 	"strings"
 )
 
-// IsLineNewHost returns a boolean value stating the new host on this line,
-// otherwise this returns an empty string.
-func IsLineNewHost(line string) string {
-	trimmedSplitLine := strings.Split(strings.TrimSpace(line), " ")
-
+// FindHost returns a string value corresponding to the new SSH host on this
+// line, otherwise this returns an empty string.
+func FindHost(line string) string {
 	hostRegexp := regexp.MustCompile(`host`)
+	hostMatch := ExtractValueRegexp(line, hostRegexp)
+	return hostMatch
+}
 
-	var foundHost bool
-	var newHostArray []string
-	for _, word := range trimmedSplitLine {
-		if foundHost {
-			newHostArray = append(newHostArray, word)
+// ExtractValueRegexp extracts the value using a regular expression returning
+// values extracted after the first match of the regexp.
+func ExtractValueRegexp(line string, regex *regexp.Regexp) string {
+	var found bool
+	var valueArray []string
+	splitLine := strings.Split(strings.TrimSpace(line), " ")
+	for _, word := range splitLine {
+		if found {
+			valueArray = append(valueArray, word)
 		} else {
-			match := hostRegexp.FindStringIndex(strings.ToLower(word))
+			match := regex.FindStringIndex(strings.ToLower(word))
 			if match != nil {
-				foundHost = true
+				found = true
 			}
 		}
 	}
 
-	return strings.Join(newHostArray, "_")
+	return strings.Join(valueArray, " ")
 }
