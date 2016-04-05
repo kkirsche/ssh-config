@@ -5,18 +5,44 @@ A cross-platform sshd configuration file manager allowing for easily adding and 
 
 ## Examples
 
+### Check SSH Configuration File For File Ownership and Permission Errors
+
+```shell
+~ ❯❯❯ ssh-config doctor
+[Doctor Action] Opening local SSH configuration at /Users/kkirsche/.ssh/config
+[Doctor Success] Global configuration file is correctly owned.
+[Doctor Success] Global configuration file is correctly owned.
+
+~ ❯❯❯ ssh-config doctor -v
+Using config file: /Users/kkirsche/.ssh/config
+[Doctor Action] Opening local SSH configuration at /Users/kkirsche/.ssh/config
+[Doctor Success] Global configuration file permissions are -rw-r--r-- (0644)
+[Doctor Success] Global configuration file is correctly owned.
+[Doctor Action] Opening global configuration at /etc/ssh/ssh_config
+[Doctor Success] Global configuration file permissions are -rw-r--r-- (0644)
+[Doctor Success] Global configuration file is correctly owned.
+```
+
 ### Add Entries to Configuration File(s)
 
 ```shell
-~ ❯❯❯ ssh-config add -n "Ghost" -r "1.2.3.4" -p 22 -u "example"
-Adding the following entry to /Users/example/.ssh/config
+~/Desktop ❯❯❯ touch testConfig
+~/Desktop ❯❯❯ ssh-config add -r "1.2.3.4" -p 22 -u "example" -w "/Users/kkirsche/Desktop/testConfig" -v Ghost
+Using config file: /Users/kkirsche/.ssh/config
+[Add Info] Detected passed arguments: [Ghost]. Combined as: Ghost.
+[Add Info] Printing SSH configuration entry to stdout.
 
 Host Ghost
 Hostname 1.2.3.4
 Port 22
 User example
 
-Entry saved successfully!
+[Add Success] SSH Configuration Entry Successfully Appended
+~/Desktop ❯❯❯ cat TestThis
+Host Ghost
+Hostname 1.2.3.4
+Port 22
+User example
 ```
 
 ### Show Configuration File(s)

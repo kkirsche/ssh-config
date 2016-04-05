@@ -154,18 +154,20 @@ stdout as well as (if specified) a file.`,
 		}
 
 		if args != nil {
-			config.Host = strings.Join(args, "")
+			joinedArgs := strings.Join(args, "_")
+			logger.VerbosePrintf("[Add Info] Detected passed arguments: %v. Combined as: %s.", args, joinedArgs)
+			config.Host = joinedArgs
 		}
 
-		if config.Host != "" {
+		if config.Host == "" {
 			validation = false
-			logger.Errorf("Host's name not provided. Please provide the name via --name or -n.")
+			logger.Errorf("[Add Error] Host's name not provided. Please provide the name via --name or -n.")
 			return
 		}
 
 		if !sshConfig.ValidStringArgs(sshConfig.ValidAddressFamilyAnswers(), addressFamily) {
 			validation = false
-			logger.Errorf("Invalid value provided to --address-family (-a). Please enter any, inet, or inet6. You provided: %s", addressFamily)
+			logger.Errorf("[Add Error] Invalid value provided to --address-family (-a). Please enter any, inet, or inet6. You provided: %s", addressFamily)
 			return
 		}
 
@@ -287,25 +289,27 @@ stdout as well as (if specified) a file.`,
 
 		if validation == true {
 			t := template.Must(template.New("sshConfig").Parse(sshConfig.SSHConfigurationEntryTemplate))
+			logger.Printf("[Add Info] Printing SSH configuration entry to stdout.\n")
 			err := t.Execute(os.Stdout, config)
 			if err != nil {
-				logger.Errorf("\nCouldn't finish printing SSH Configuration Template to stdout. Received error during printing: %s", err.Error())
+				logger.Errorf("\n[Add Error] Couldn't finish printing SSH Configuration Template to stdout. Received error during printing: %s", err.Error())
 				return
 			}
 
 			if writeToFile != "" {
 				file, err := os.OpenFile(writeToFile, os.O_APPEND|os.O_WRONLY, 0666)
 				if err != nil {
-					logger.Errorf("\nCouldn't open the SSH Configuration file at %s. Received error: %s", writeToFile, err.Error())
+					logger.Errorf("\n[Add Error] Couldn't open the SSH Configuration file at %s. Received error: %s", writeToFile, err.Error())
 					return
 				}
 				defer file.Close()
 
 				err = t.Execute(file, config)
 				if err != nil {
-					logger.Errorf("\nCouldn't execute SSH Configuration Template on file. Received error: %s", err.Error())
+					logger.Errorf("\n[Add Error] Couldn't execute SSH Configuration Template on file. Received error: %s", err.Error())
 					return
 				}
+				logger.Println("\n[Add Success] SSH Configuration Entry Successfully Appended")
 			}
 		}
 	},
