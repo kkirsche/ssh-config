@@ -5,14 +5,25 @@ import (
 	"strings"
 )
 
-func isLineNewHost(line string) bool {
-	isNewHost := false
-	lowercaseLine := strings.ToLower(line)
+// IsLineNewHost returns a boolean value stating the new host on this line,
+// otherwise this returns an empty string.
+func IsLineNewHost(line string) string {
+	trimmedSplitLine := strings.Split(strings.TrimSpace(line), " ")
 
-	hostRegexp := regexp.MustCompile(`(\s*)?host\s`)
-	if hostRegexp.FindString(lowercaseLine) != "" {
-		isNewHost = true
+	hostRegexp := regexp.MustCompile(`host`)
+
+	var foundHost bool
+	var newHostArray []string
+	for _, word := range trimmedSplitLine {
+		if foundHost {
+			newHostArray = append(newHostArray, word)
+		} else {
+			match := hostRegexp.FindStringIndex(strings.ToLower(word))
+			if match != nil {
+				foundHost = true
+			}
+		}
 	}
 
-	return isNewHost
+	return strings.Join(newHostArray, "_")
 }
