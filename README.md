@@ -3,6 +3,22 @@
 
 A cross-platform sshd configuration file manager allowing for easily adding and removing host configurations.
 
+## Installation
+
+### From Source
+
+```shell
+~ ❯❯❯ go get -u github.com/kkirsche/ssh-config
+```
+
+### Homebrew
+
+Coming Soon!
+
+<!-- ```shell
+~ ❯❯❯ brew update && brew install ssh-config
+``` -->
+
 ## Examples
 
 ### Check SSH Configuration File For File Ownership and Permission Errors
