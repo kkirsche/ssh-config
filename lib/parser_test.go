@@ -3,19 +3,19 @@ package sshConfig
 import "testing"
 
 func TestIsLineNewHost(t *testing.T) {
-	if IsLineNewHost("Host Ghost") != "Ghost" {
+	if FindHost("Host Ghost") != "Ghost" {
 		t.FailNow()
 	}
 
-	if IsLineNewHost(" Host Ghost ") != "Ghost" {
+	if FindHost(" Host Ghost ") != "Ghost" {
 		t.FailNow()
 	}
 
-	if IsLineNewHost(" Host GHOST ") != "GHOST" {
+	if FindHost(" Host GHOST ") != "GHOST" {
 		t.FailNow()
 	}
 
-	if IsLineNewHost(" Host ghost ") != "ghost" {
+	if FindHost(" Host ghost ") != "ghost" {
 		t.FailNow()
 	}
 }
